@@ -1,3 +1,6 @@
+import { useState } from "react";
+import BottomMenu from "./BottomMenu.jsx";
+import FeaturesCard from "./FeaturesCard.jsx";
 import MealEditor from "./MealEditor.jsx";
 import ProgressBar from "./ProgressBar.jsx";
 import { calculateDailyTotals, calculateMealTotals } from "../lib/mealNutrition.js";
@@ -90,6 +93,8 @@ export default function Dashboard({
   activityLabel,
   goalLabel,
   meals,
+  training = [],
+  recovery = [],
   catalog,
   onAddMeal,
   onEditMeal,
@@ -97,6 +102,8 @@ export default function Dashboard({
   onEditTargets,
   onResetSession,
 }) {
+  const [activeSection, setActiveSection] = useState("overview");
+  const [activeFeature, setActiveFeature] = useState("nutrition");
   const totals = calculateDailyTotals(meals);
   const caloriesRemaining = targets.calorieTarget - totals.calories;
   const calorieRatio = targets.calorieTarget > 0 ? totals.calories / targets.calorieTarget : 0;
@@ -110,13 +117,25 @@ export default function Dashboard({
         : "Under target";
   const progressTone = calorieRatio > 1 ? "over" : calorieRatio >= 0.98 ? "at" : calorieRatio >= 0.9 ? "close" : "under";
 
+  function navigateTo(section) {
+    setActiveSection(section);
+    if (["nutrition", "training", "recovery", "weekly-progress"].includes(section)) {
+      setActiveFeature(section);
+    }
+  }
+
+  function selectFeature(feature) {
+    setActiveFeature(feature);
+    setActiveSection(feature);
+  }
+
   return (
     <div className="dashboard" aria-labelledby="dashboard-title">
       <header className="dashboard-header">
         <div>
           <span className="eyebrow">YOUR DAILY PLAN</span>
-          <h1 id="dashboard-title">A little more mindful, every day.</h1>
-          <p>{goalLabel} · {activityLabel} · Your meals, all in one place.</p>
+          <h1 id="dashboard-title">A clear plan for today.</h1>
+          <p>Your {goalLabel.toLowerCase()} target, {activityLabel.toLowerCase()} routine, and meals in one daily record.</p>
         </div>
         <div className="dashboard-header__actions">
           <button className="button button--primary" onClick={onAddMeal} type="button"><span aria-hidden="true">＋</span> Add meal</button>
@@ -124,7 +143,9 @@ export default function Dashboard({
         </div>
       </header>
 
-      <section className="calorie-panel" aria-labelledby="calorie-panel-title">
+      <BottomMenu activeItem={activeSection} onNavigate={navigateTo} />
+
+      <section className="calorie-panel" id="overview" tabIndex={-1} aria-labelledby="calorie-panel-title">
         <div className="calorie-panel__main">
           <div className="calorie-panel__title-row">
             <span className="calorie-panel__icon" aria-hidden="true">◒</span>
@@ -146,7 +167,7 @@ export default function Dashboard({
         </div>
       </section>
 
-      <section className="macro-section" aria-labelledby="macro-title">
+      <section className="macro-section" id="nutrition" tabIndex={-1} aria-labelledby="macro-title">
         <div className="section-heading">
           <div><span className="eyebrow">YOUR DAILY BALANCE</span><h2 id="macro-title">Macros</h2></div>
           <span className="section-heading__hint">Targets update when you edit your goal</span>
@@ -156,7 +177,16 @@ export default function Dashboard({
         </div>
       </section>
 
-      <section className="today-meals-section" aria-labelledby="today-meals-title">
+      <FeaturesCard
+        activeFeature={activeFeature}
+        meals={meals}
+        onSelectFeature={selectFeature}
+        recovery={recovery}
+        targets={targets}
+        training={training}
+      />
+
+      <section className="today-meals-section" id="meals" aria-labelledby="today-meals-title">
         <div className="section-heading">
           <div><span className="eyebrow">TODAY</span><h2 id="today-meals-title">Today's meals <span className="meal-count">{meals.length}</span></h2></div>
           <button className="button button--outline" onClick={onAddMeal} type="button"><span aria-hidden="true">＋</span> Add meal</button>
@@ -182,7 +212,7 @@ export default function Dashboard({
         )}
       </section>
 
-      <details className="calculation-note">
+      <details className="calculation-note" id="target-details">
         <summary>How this estimate is calculated</summary>
         <p>Your BMR estimate is {formatCalories(targets.bmr)} and estimated daily energy expenditure is {formatCalories(targets.tdee)}. The goal adjustment and macro split follow the PlateCoach Phase 1 calculator.</p>
       </details>

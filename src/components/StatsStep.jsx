@@ -7,7 +7,6 @@ export default function StatsStep({ profile, onChange, onContinue, error }) {
   return (
     <section className="setup-panel" aria-labelledby="stats-title">
       <div className="setup-panel__intro">
-        <span className="eyebrow">STEP 01 · YOUR STARTING POINT</span>
         <h1 id="stats-title">Let’s start with your stats.</h1>
         <p>A few basics help us estimate a daily target that fits you.</p>
       </div>

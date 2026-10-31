@@ -25,6 +25,8 @@ function defaultSession() {
     targets: null,
     meals: [],
     customFoods: [],
+    training: [],
+    recovery: [],
   };
 }
 
@@ -43,6 +45,8 @@ function readSession() {
       targets: saved.targets && typeof saved.targets === "object" ? saved.targets : null,
       meals: Array.isArray(saved.meals) ? saved.meals.map(normalizeSavedMeal).filter(Boolean) : [],
       customFoods: Array.isArray(saved.customFoods) ? saved.customFoods : [],
+      training: Array.isArray(saved.training) ? saved.training : [],
+      recovery: Array.isArray(saved.recovery) ? saved.recovery : [],
     };
   } catch {
     return defaultSession();
@@ -169,6 +173,14 @@ function App() {
     setSession((current) => ({ ...current, customFoods: [...current.customFoods, food] }));
   }
 
+  function addTraining(entry) {
+    setSession((current) => ({ ...current, training: [...current.training, entry] }));
+  }
+
+  function addRecovery(entry) {
+    setSession((current) => ({ ...current, recovery: [...current.recovery, entry] }));
+  }
+
   function confirmAction() {
     if (confirmation?.kind === "reset") {
       try { window.sessionStorage.removeItem(SESSION_KEY); } catch { /* Reset in-memory even if storage is blocked. */ }
@@ -238,6 +250,10 @@ function App() {
             onEditMeal={(meal) => setMealEditor({ meal })}
             onEditTargets={beginTargetEdit}
             onResetSession={() => setConfirmation({ kind: "reset" })}
+            recovery={session.recovery}
+            training={session.training}
+            onAddTraining={addTraining}
+            onAddRecovery={addRecovery}
             targets={session.targets}
           />
         )}

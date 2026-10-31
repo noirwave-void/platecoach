@@ -4,7 +4,6 @@ export default function ActivityStep({ selectedId, onSelect, onBack, onContinue 
   return (
     <section className="setup-panel" aria-labelledby="activity-title">
       <div className="setup-panel__intro">
-        <span className="eyebrow">STEP 02 · YOUR MOVEMENT</span>
         <h1 id="activity-title">How active are most weeks?</h1>
         <p>Choose the description that best matches your typical routine.</p>
       </div>

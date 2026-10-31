@@ -4,7 +4,6 @@ export default function GoalStep({ selectedId, onSelect, onBack, onCalculate, er
   return (
     <section className="setup-panel" aria-labelledby="goal-title">
       <div className="setup-panel__intro">
-        <span className="eyebrow">STEP 03 · YOUR DIRECTION</span>
         <h1 id="goal-title">What are you working toward?</h1>
         <p>Your target is a starting point you can adjust as you learn what works.</p>
       </div>

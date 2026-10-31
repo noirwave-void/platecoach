@@ -1,4 +1,4 @@
-const STEPS = ["Your stats", "Activity", "Your goal"];
+const STEPS = ["Profile", "Activity", "Goal"];
 
 export default function StepIndicator({ currentStep }) {
   return (
